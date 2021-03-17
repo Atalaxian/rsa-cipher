@@ -2,7 +2,6 @@ import secrets
 import random
 import sys
 from typing import Tuple
-
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog
 from error_window import Ui_widget
@@ -59,10 +58,11 @@ class RSA:
                 gcd, xe, y = gcd_extended(x, eyler)
                 if gcd == 1:
                     list_e.append(x)
-                    if len(list_e) == 10:
+                    if len(list_e) == 30:
                         break
         e = 0
         d = 0
+        list_e = list(reversed(list_e))
         random.shuffle(list_e)
         for elem in list_e:
             gcd, x, y = gcd_extended(elem, eyler)
@@ -77,8 +77,7 @@ class RSA:
             if x != 0:
                 encode_text += ','
             intelem = ord(elem)
-            to_degree = intelem ** e
-            code_int = to_degree % n
+            code_int = pow(intelem, e, n)
             encode_text += str(code_int)
         return encode_text
 
@@ -91,8 +90,7 @@ class RSA:
         d, n = [int(x) for x in keys]
         decode_text = ''
         for elem in self.text:
-            to_degree = int(elem) ** d
-            mod = to_degree % n
+            mod = pow(int(elem), d, n)
             code_char = chr(mod)
             decode_text += str(code_char)
         return decode_text
@@ -191,7 +189,7 @@ class MainWindow(QWidget, Ui_Form):
             file_path = filegialog[0].toLocalFile()
             if file_path == '':
                 return
-            file = open(file_path, 'r')
+            file = open(file_path, 'r', encoding='UTF-8')
             text = file.read()
             self.code_start.setText(text)
 
@@ -203,7 +201,7 @@ class MainWindow(QWidget, Ui_Form):
             file_path = filegialog[0].toLocalFile()
             if file_path == '':
                 return
-            file = open(file_path, 'r')
+            file = open(file_path, 'r', encoding='UTF-8')
             text = file.read()
             self.decode_start.setText(text)
 
@@ -220,7 +218,7 @@ class MainWindow(QWidget, Ui_Form):
             file_path = filegialog[0].toLocalFile()
             if file_path == '':
                 return
-            file = open(file_path, 'w')
+            file = open(file_path, 'w', encoding='UTF-8')
             file.write(text)
 
     @QtCore.pyqtSlot()
@@ -236,7 +234,7 @@ class MainWindow(QWidget, Ui_Form):
             file_path = filegialog[0].toLocalFile()
             if file_path == '':
                 return
-            file = open(file_path, 'w')
+            file = open(file_path, 'w', encoding='UTF-8')
             file.write(text)
 
 
